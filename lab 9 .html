@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f2f2f2;
+    }
+
+    .todo-container {
+      width: 300px;
+      margin: 0 auto;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    li span {
+      cursor: pointer;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>To-Do List</h1>
+  <div class="todo-container">
+    <input id="taskInput" type="text" placeholder="Add a new task">
+    <button onclick="addTask()">Add</button>
+  </div>
+  <ul id="taskList"></ul>
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    loadTasks();
+
+    // Add task
+    function addTask() {
+      const text = document.getElementById("taskInput").value.trim();
+      if (!text) return;
+      tasks.push({ text, done: false });
+      saveTasks();
+      loadTasks();
+      document.getElementById("taskInput").value = "";
+    }
+
+    // Load UI
+    function loadTasks() {
+      const list = document.getElementById("taskList");
+      list.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span class="${task.done ? 'done' : ''}" onclick="toggleTask(${index})">
+            ${task.text}
+          </span>
+          <button onclick="deleteTask(${index})">X</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    // Mark complete
+    function toggleTask(i) {
+      tasks[i].done = !tasks[i].done;
+      saveTasks();
+      loadTasks();
+    }
+
+    // Delete
+    function deleteTask(i) {
+      tasks.splice(i, 1);
+      saveTasks();
+      loadTasks();
+    }
+
+    // Save localStorage
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  </script>
+</body>
+</html>
